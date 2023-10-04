@@ -7,6 +7,11 @@ sumNumbers :: Int -> Int
 
 sumNumbers n = if n < 1 then n else n `mod` 10 + sumNumbers(n `div` 10)
 
+-- analyseNumber :: Int -> Int -> Int 
+
+-- analyseNumber num kol sum | num < 10 = (kol) sum
+--                           | otherwise = analyseNumber (num `div` 10) (kol + 1) (sum + num `mod` 10)
+
 --2
 
 conjectureCollatz :: Int -> [Int]
