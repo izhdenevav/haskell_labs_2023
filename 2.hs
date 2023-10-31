@@ -20,6 +20,8 @@ dec2bin x = dec2bin' x []
 
 --2
 
+--ver1
+
 conjectureCollatz :: Int -> ([Int], Int, Int)
 conjectureCollatz num | num > 0 = conjectureCollatz' num [num] 0 0
                       | otherwise = error"debil chto li"
@@ -28,6 +30,17 @@ conjectureCollatz' :: Int -> [Int] -> Int -> Int -> ([Int], Int, Int)
 conjectureCollatz' 1 aсс cnt max = (aсс, cnt, max)
 conjectureCollatz' num acc cnt max | even num = conjectureCollatz' (div num 2) (acc ++ [div num 2]) (cnt + 1) (maximum acc)
                                    | otherwise = conjectureCollatz' (num * 3 + 1) (acc ++ [num * 3 + 1]) (cnt + 1) (maximum acc)
+
+--ver2
+
+myCollatz :: Int -> ([Int], Int, Int)
+myCollatz num | num > 0 = myCollatz' num ([num], 0, 0)
+              | otherwise = error"debil chto li"
+
+myCollatz' :: Int -> ([Int], Int, Int) -> ([Int], Int, Int)
+myCollatz' 1 acc = acc
+myCollatz' num acc@(arr, cnt, max) | even num = myCollatz' (div num 2) ((arr ++ [div num 2]), (cnt + 1), (maximum arr))
+                                   | otherwise = myCollatz' (num * 3 + 1) ((arr ++ [num * 3 + 1]), (cnt + 1), (maximum arr))
 
 --3
 checkStepen :: Int -> Bool 
