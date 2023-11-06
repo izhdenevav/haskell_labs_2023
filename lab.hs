@@ -33,22 +33,38 @@ setAnd arr1 arr2 = [x | x <- arr1, y <- arr2, x == y]
 
     --4
 
---sequenceByPred :: (a -> a) -> a -> [a]
+sequenceByPred :: (a -> a) -> a -> [a]
 
---sequenceByPred func arr = 
+sequenceByPred func x = x : sequenceByPred func (func x) 
+
+--5
+
+sequenceByPred' :: (a -> a -> a) -> a -> a -> [a]
+
+sequenceByPred' func x y = x : y : sequenceByPred' func (func x y) (func y (func x y))
+
+--take 10 (sequenceByPred' (+) 0 1) для чисел Фибоначчи
 
 --6 сделала в 1 лабе
-
 --7
 
 --8
 
 sort :: [Int] -> [Int]
 
-sort (a:a2:arr) | a > a2 = a2 : sort (a : arr)
-                | otherwise = a : sort (a2 : arr)
+-- sort (a:a2:arr) | a > a2 = a2 : sort (a : arr)
+--                 | otherwise = a : sort (a2 : arr)
 
-sort arr = arr
+-- sort arr = arr
+
+sort [] = []
+
+sort [a] = [a]
+
+sort (a:arr) = sort' a (sort arr)
+           where sort' a [] = [a]
+                 sort' a (a2:arr) | a > a2 = a2 : sort' a arr 
+                                  | otherwise = a : a2 : arr                
 
 
 
