@@ -1,23 +1,13 @@
---import Data.Text(pack, unpack, replace, foldl)
+{-# LANGUAGE RankNTypes #-}
+--{-# LANGUAGE OverloadedStrings #-}
+import Data.Text(pack, unpack, replace)
 import Data.Char
 
 --str 
     --1
--- printf :: String -> [String] -> String
 
--- printf str arr | str `isPrefixOf` "%s" = undefined
-
--- replacedoubleslash :: String -> String -> String
-
--- replacedoubleslash s s_rep = unpack $ replace (pack "%s") (pack s_rep) (pack s)
-
--- str = "djfjjgfj//djjje"
-
--- str2 = replacedoubleslash str
-
--- printf :: String -> [String] -> String
-
--- printf str arr | str `isPrefixOf` "%s" = 
+printf :: String -> [a] -> Show a => String
+printf str args = foldl (\ acc arg -> unpack $ replace (pack "%s") (pack (show arg)) (pack acc)) str args
 
 --math
     --1
@@ -39,7 +29,7 @@ decToBinary num = decToBinary' num ""
 nToDec :: String -> Int -> Int
 
 symbolToInteger :: Char -> Int
-symbolToInteger sym | ord sym > 64 && ord sym < 91 = ord sym - 55 
+symbolToInteger sym | ord sym > 64 && ord sym < 91 = ord sym - 55
                     | ord sym > 96 && ord sym < 123 = ord sym - 87
                     | ord sym > 47 && ord sym < 58 = ord sym - 48
                     | otherwise = error"патамушта понабирают всяких"
@@ -50,7 +40,7 @@ nToDec num base = foldl (\ acc c -> (acc + symbolToInteger c) * base) 0 (init nu
     --3
 stringToInt :: String -> Int
 
-stringToInt str = foldl (\ acc c -> (acc + (ord c - 48)) * 10) 0 (init str) + ord (last str) - 48;
+stringToInt str = foldl (\ acc c -> (acc + symbolToInteger c) * 10) 0 (init str) + symbolToInteger (last str);
 
     --4
 --findMissingNumber :: [Integer] -> Integer -> Integer
@@ -63,14 +53,19 @@ findMissingNumber seq n = head [x | x <- [1..n], notElem x seq]
 --different
     --1
 
--- isTrueBracketSequence :: ([Char] -> Bool) -> [Char] -> Bool
--- isTrueBracketSequence predicate seq | countBracket seq == 0 = predicate seq
---                                     | otherwise = isTrueBracketSequence predicate seq
+checkSequence :: [Char] -> Bool
+checkSequence seq = checkSequence' seq []
+                    where checkSequence' :: [Char] -> [Char] -> Bool
+                          checkSequence' [] [] = True
+                          checkSequence' [] stack = False
+                          checkSequence' seq@(x:xs) stack | x == ')' && null stack = False
+                                                          | x == ')' && not (null stack) = checkSequence' xs (pop stack)
+                                                          | x == '(' = checkSequence' xs (push stack)
+                                                          | otherwise = checkSequence' xs stack
 
--- isTrueBracketSequence :: [Char] -> Bool 
--- isTrueBracketSequence seq | countBracket seq == 0 = True
---                           | otherwise = False
+push :: [Char] -> [Char]
+push stack = '(' : stack
 
--- countBracket :: [Char] -> Integer
--- countBracket = foldl (\ acc c -> if c == '(' then acc + 1 else acc - 1) 0
+pop :: [Char] -> [Char]
+pop = drop 1
 
