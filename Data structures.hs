@@ -137,7 +137,7 @@ multipOfComplexNumbers :: ComplexNumber
 multipOfComplexNumbers = ComplexNumber {a = a cn1 * a cn2 + b cn1 * b cn2 * (-1), b = a cn1 * b cn2 + b cn1 * a cn2}
 
 divOfComplexNumbers :: ComplexNumber
-divOfComplexNumbers = undefined
+divOfComplexNumbers = ComplexNumber {a = (a cn1 * a cn2 - b cn1 * b cn2 * (-1))/(a cn2**2 - b cn2**2 * (-1)), b = (b cn1 * a cn2 - b cn2 * a cn1)/(a cn2**2 - b cn2**2 * (-1))}
 
 -- - взятие сопряженного
 conjugateComplexNumber :: ComplexNumber
@@ -145,7 +145,7 @@ conjugateComplexNumber = ComplexNumber {a = a cn1, b = -b cn1}
 
 -- - взятие абсолютного значения
 absoluteValue :: Double
-absoluteValue = sqrt(a cn1**2 + b cn1**2) 
+absoluteValue = sqrt(a cn2**2 + b cn2**2) 
 
 -- Создайте тип, который образует односвязный список (<=> список имеет голову и хвост, либо является пустым)
 -- реализуйте  для него следующие методы:
