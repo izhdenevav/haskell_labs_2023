@@ -44,11 +44,14 @@ stringToInt str = foldl (\ acc c -> (acc + symbolToInteger c) * 10) 0 (init str)
 
     --4
 --findMissingNumber :: [Integer] -> Integer -> Integer
-
 --findMissingNumber seq n = foldl (\ acc x -> if elem x seq then acc else x) 0 [1..n]
 
-findMissingNumber :: [Integer] -> Integer -> Integer
-findMissingNumber seq n = head [x | x <- [1..n], notElem x seq]
+-- findMissingNumber :: [Integer] -> Integer -> Integer
+-- findMissingNumber seq n = head [x | x <- [1..n], notElem x seq]
+
+findMissingNumber :: [Int] -> Int
+findMissingNumber seq | sum [1..maximum seq] /= sum seq = sum [1..maximum  seq] - sum seq
+                      | otherwise = length seq + 1
 
 --different
     --1
