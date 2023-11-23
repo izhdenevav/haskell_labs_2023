@@ -6,8 +6,13 @@ import Data.Char
 --str 
     --1
 
-printf :: String -> [a] -> Show a => String
-printf str args = foldl (\ acc arg -> unpack $ replace (pack "%s") (pack (show arg)) (pack acc)) str args
+-- printf :: String -> [a] -> Show a => String
+-- printf str args = foldl (\ acc arg -> unpack $ replace (pack "%s") (pack (show arg)) (pack acc)) str args
+
+printf :: String -> [String] -> String --сигнатуру подсказали на паре
+printf [] args = []
+printf ('%':'s':str) (arg:args) = arg ++ printf str args
+printf (sym:str) args = sym : printf str args
 
 --math
     --1
