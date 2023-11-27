@@ -150,17 +150,25 @@ absoluteValue = sqrt(a cn2**2 + b cn2**2)
 -- Создайте тип, который образует односвязный список (<=> список имеет голову и хвост, либо является пустым)
 -- реализуйте  для него следующие методы:
 
-data MyList a = UndefinedList
+data MyList a = Empty | Node a (MyList a) deriving (Show)
+
+-- data MyList a = MyList { value :: Integer
+--                        , next :: MyList a} 
 
 fromList :: [a] -> MyList a
-fromList = undefined
+fromList [] = Empty
+fromList list = Node (head list) (fromList (tail list))
 
 toList :: MyList a -> [a]
-toList = undefined
+toList Empty = []
+toList (Node value next) = value : toList next 
 
 reverseMyList :: MyList a -> MyList a
-reverseMyList = undefined
+reverseMyList list = reverseMyList' list Empty
+              where reverseMyList' Empty acc = acc
+                    reverseMyList' (Node value next) acc = reverseMyList' next (Node value acc)
 
 -- should do the same thing as standard map
 mapMyList :: (a -> b) -> MyList a -> MyList b
-mapMyList = undefined
+mapMyList _ Empty = Empty
+mapMyList func (Node value next) = Node (func value) (mapMyList func next)
