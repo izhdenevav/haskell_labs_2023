@@ -101,8 +101,12 @@ mostPopularDogGender | length (filter (\(Dog _ _ gender _ _) -> gender == Female
                      | otherwise = Male
 
 --oldest dog
---oldestDog :: Dog
---oldestDog = (\(Dog _ age _ _ _) acc -> )
+-- maxAge :: [Dog] -> Dog
+-- maxAge dogs | age (head dogs) > age (maxAge (tail dogs)) = head dogs
+--             | otherwise = maxAge (tail dogs)
+
+-- oldestDog :: Dog
+-- oldestDog = undefined
 
 averageDogAge :: Double
 averageDogAge = fromIntegral (foldl (\ acc (Dog _ age _ _ _) -> acc + age) 0 dogs) / fromIntegral (length dogs)
