@@ -53,8 +53,8 @@ isDeckFull deck | length deck /= 54 = False
 --                   | otherwise = isOrderRight' deck 
 --                                 where isOrderRight' :: [Card] -> Bool
 --                                       isOrderRight' (Card suit1 rank1 : Card suit2 rank2 : ost)  | suit1 < suit2 = True
---                                                                                                      | suit1 == suit2 && rank1 < rank2 = True
---                                                                                                      | otherwise = False && isOrderRight' (Card suit2 rank2 : ost)
+--                                                                                                  | suit1 == suit2 && rank1 < rank2 = True
+--                                                                                                  | otherwise = False && isOrderRight' (Card suit2 rank2 : ost)
 
 --b
 --chzh
@@ -100,8 +100,15 @@ generateValidIPV4 str = filter validIPV4 $ generateIPV4 str 4
 aCount :: (Eq a) => [a] -> a -> Int
 aCount list el = (length . filter (== el)) list
 
---makeHistogram :: (Eq a, Show a) => [a] -> String
---makeHistogram list = "Total: " ++ show (length list) ++ " elem" ++ "\n" ++ 
+generateString :: Int -> String
+generateString 0 = []
+generateString num = generateString (num - 1) ++ "|"
+
+makeHistogram :: (Eq a, Show a) => [a] -> String
+makeHistogram list = "Total: " ++ show (length list) ++ " elem" ++ "\n" ++ intercalate "\n" (map (\el -> show el ++ ": " ++ generateString (aCount list el)) (nub list))
+
+--showList' :: (Show a) => [a] -> String
+--showList' list = intercalate ", " (map show list)
 
 --map (\el -> el ++ " " ++ show (aCount list el) list
 
@@ -117,7 +124,7 @@ sumQuadr num | num < 1 = num
 
 niceNumber :: Int -> Bool
 niceNumber num | num == 1 = True
-               | sumQuadr num == 1 = True
+               | niceNumber (sumQuadr num) = True
                | otherwise = False
 
 --advanced
