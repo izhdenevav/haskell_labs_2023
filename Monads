@@ -1,0 +1,44 @@
+--Класс типов - это своего рода интерфейс, который определяет определенное поведение. 
+--Если тип является частью класса типов, это означает, что он поддерживает и реализует поведение, описываемое классом типов.
+
+--1
+data List a = Empty | List a
+              deriving (Show)
+
+--Функторы применяют обычную функцию к упакованному значению.
+instance Functor List where
+    fmap f (List a) = List (f a)
+    fmap _ Empty = Empty
+
+--Аппликативные функторы применяют упакованную функцию к упакованному же значению.
+instance Applicative List where
+    pure = List
+    List a <*> List b = List (a b)
+    Empty <*> _ = Empty
+    _ <*> Empty = Empty
+
+--Монады применяют функцию, которая возвращает упакованное значение, к упакованному значению.
+instance Monad List where 
+    (List a) >>= f = f a
+    Empty >>= _ = Empty
+
+list1 = List [1,2,3,4]
+list2 = List (List (List (List 1)))
+
+--2
+data MyMaybe a = MyNothing | MyJust a
+
+instance Functor MyMaybe where
+    fmap _ MyNothing = MyNothing
+    fmap f (MyJust a) = MyJust (f a)
+
+instance Applicative MyMaybe where
+    pure = MyJust
+    (<*>) :: MyMaybe (a -> b) -> MyMaybe a -> MyMaybe b
+    _ <*> MyNothing = MyNothing
+    MyNothing <*> _ = MyNothing
+    MyJust a <*> MyJust b = MyJust (a b)
+
+instance Monad MyMaybe where
+    (MyJust a) >>= f = f a
+    MyNothing >>= _ = MyNothing
