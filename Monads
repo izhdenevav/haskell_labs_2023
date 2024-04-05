@@ -1,0 +1,76 @@
+--Класс типов - это своего рода интерфейс, который определяет определенное поведение. 
+--Если тип является частью класса типов, это означает, что он поддерживает и реализует поведение, описываемое классом типов.
+
+--1
+{-data List a = Empty | List a
+              deriving (Show)
+
+--Функторы применяют обычную функцию к упакованному значению.
+instance Functor List where --fmap <$>
+    fmap f (List a) = List (f a)
+    fmap _ Empty = Empty
+
+--Аппликативные функторы применяют упакованную функцию к упакованному же значению.
+--В контексте определения аппликативного функтора, понятие "pure" обычно означает функцию, которая "упаковывает" значение в контекст функтора. 
+--Вводится для типов данных, для которых есть способ создать функторное значение из обычного значения.
+--The <*> operator unwraps both its operands, unlike fmap which only unwraps its right operand.
+instance Applicative List where
+    pure = List
+    List a <*> List b = List (a b)
+    Empty <*> _ = Empty
+    _ <*> Empty = Empty
+
+--Монады применяют функцию, которая возвращает упакованное значение, к упакованному значению.
+--m >>= k suggests "feed the result of computation m to the function k"; 
+--m >> n suggests "run the m computation and then the n computation".
+instance Monad List where 
+    (List a) >>= f = f a
+    Empty >>= _ = Empty
+
+list1 = List [1,2,3,4]
+list2 = List (List (List (List 1)))-}
+
+--1 true
+data List a = Empty | Cons a (List a)
+
+instance Functor List where
+  fmap f Empty = Empty
+  fmap f (Cons x xs) = Cons (f x) (fmap f xs)
+
+instance Applicative List where
+    pure x = Cons x Empty
+    Empty <*> _ = Empty
+    _ <*> Empty = Empty
+    Cons f fs <*> Cons g gs = Cons (f g) (fs <*> gs)
+
+instance Monad List where 
+    Empty >>= _ = Empty
+--    Cons x xs >>= f = Cons (f x) (xs >>= f)
+    Cons x xs >>= f = makeList (f x) (xs >>= f)
+                    where makeList Empty ys = ys
+                          makeList (Cons x xs) ys = Cons x (makeList ys xs)
+
+--2
+data MyMaybe a = MyNothing | MyJust a
+                 deriving (Show)
+
+instance Functor MyMaybe where
+    fmap _ MyNothing = MyNothing
+    fmap f (MyJust a) = MyJust (f a)
+
+instance Applicative MyMaybe where
+    pure = MyJust
+    _ <*> MyNothing = MyNothing
+    MyNothing <*> _ = MyNothing
+    MyJust a <*> MyJust b = MyJust (a b)
+
+instance Monad MyMaybe where
+    (MyJust a) >>= f = f a
+    MyNothing >>= _ = MyNothing
+
+--Написать тест для монады MyMaybe, где для операции <*> показывается, что значение стандартной монады и твоей одинаковые
+test1 = Just (^4) <*> Just 5
+test2 = MyJust (^4) <*> MyJust 5
+
+test3 = Nothing <*> Just 5
+test4 = MyNothing <*> MyJust 5
