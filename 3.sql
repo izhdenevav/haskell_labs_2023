@@ -1,23 +1,19 @@
 --1 Get all the unique wares in the alphabetic order with the minimal and maximal prices for each
-	--написала в 01:44
-		--SELECT WARE, max(PRICE), min(PRICE) FROM PRODUCT GROUP BY WARE
+		SELECT WARE, max(PRICE), min(PRICE) FROM PRODUCT GROUP BY WARE
 
 --2 Show top 3 wares with the most difference between minimal and maximal prices
-	--написала в 01:47
-		--SELECT WARE, max(PRICE) - min(PRICE) as difference FROM PRODUCT 
-		--GROUP BY WARE 
-		--ORDER BY difference DESC
-		--LIMIT 3
+		SELECT WARE, max(PRICE) - min(PRICE) as difference FROM PRODUCT 
+		GROUP BY WARE 
+		ORDER BY difference DESC
+		LIMIT 3
 
 --3 Show top 3 companies producing the largest number of different products
-	--написаоа в 01:50
-		--SELECT m.COMPANY, count(p.AMOUNT) as number_of_products FROM MANUFACTURER m, PRODUCT p WHERE m.BILL_ID = p.BILL_ID 
-		--GROUP BY m.COMPANY
-		--ORDER BY number_of_products DESC
-		--LIMIT 3
+		SELECT m.COMPANY, count(p.AMOUNT) as number_of_products FROM MANUFACTURER m, PRODUCT p WHERE m.BILL_ID = p.BILL_ID 
+		GROUP BY m.COMPANY
+		ORDER BY number_of_products DESC
+		LIMIT 3
 
 --4 Show the price of the most expensive ware for each category. The result should be ordered by the category
-	--01:59 идей нет
 
 --5. For each bill of materials show the company and lists of all the products and materials. The result must contain exactly one row per bill and sorted by company. Lists in the result 
 --must be represented as strings with values separated with comma
