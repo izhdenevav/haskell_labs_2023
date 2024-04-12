@@ -147,14 +147,34 @@ queryGreekPro greekData name = do
 -- Но изначальный seed должен влиять на результирующую последовательность.
 
 --randomR :: (Random a, RandomGen b) => (a,a) -> b -> (a,b) 
-type RandState = State (Int, String) 
+-- type RandState = State (Int, String) --список ??? 
+
+-- rollDice :: RandState Int
+-- rollDice = do
+--     (randState, str) <- get
+--     let (newRandState, randomInt) = (randState `mod` 6 + 1, randomInt `mod` 6)
+--     put (newRandState, str)
+--     return randomInt
+
+-- game :: RandState String
+-- game = do
+--     firstPlayerRes <- rollDice
+--     secondPlayerRes <- rollDice
+--     return $ if firstPlayerRes > secondPlayerRes then "First wins" else "Second wins"
+
+-- --evalState :: State s a -> s -> a
+-- runGame :: String
+-- runGame = evalState game startSeed
+--   where startSeed = (123, "Start game")
+
+type RandState = State [Int]
 
 rollDice :: RandState Int
 rollDice = do
-    (randState, str) <- get
-    let (newRandState, randomInt) = (randState `mod` 6 + 1, randomInt `mod` 6)
-    put (newRandState, str)
-    return randomInt
+    ints <- get
+    let randomValue = head ints
+    put $ tail ints
+    return randomValue
 
 game :: RandState String
 game = do
@@ -165,7 +185,7 @@ game = do
 --evalState :: State s a -> s -> a
 runGame :: String
 runGame = evalState game startSeed
-  where startSeed = (123, "Start game")
+  where startSeed = [1, 2, 3, 4, 5, 6]
 
 -- see this program as example:
 {-
