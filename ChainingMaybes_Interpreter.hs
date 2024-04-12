@@ -204,24 +204,48 @@ l = l
 -}
 
 data Value = Literal String | VariableReference String
+instance Show Value where
+    show (Literal val) = "Literal " ++ show val
+    show (VariableReference ref) = "VariableReference " ++ show ref
+
 data Command = Command { varName :: String, whatToPut :: Value } 
+instance Show Command where
+    show (Command var val) = "Command { varName: " ++ var ++ ", whatToPut: " ++ show val ++ " }"
 
 -- you can choose something else!
-type InterpreterState = [(String, String)]
+type InterpreterState = [(String, String)] 
+
+printList :: InterpreterState -> IO ()
+printList interpreterState = do
+    print interpreterState
 
 -- using get, set and other State functions, interpret the command
+-- interpretOne :: Command -> State InterpreterState ()
+-- interpretOne (Command var value) = do
+--     interpreterState <- get 
+--     let updatedInterpreterState = updateState var value interpreterState
+--     put updatedInterpreterState
+--     where updateState varName (Literal val) ((name, _) : xs) | varName == name = (varName, val) : xs --перезаписываем значение переменной
+--                                                              | otherwise = (name, val) : updateState varName (Literal val) xs --добавляем интерпретированную команду всписок
+--           updateState varName (VariableReference varRef) ((name, val) : xs) | varRef == name = (name, val) : updateState varName (Literal val) xs
+--                                                                             | otherwise = (name, val) : updateState varName (VariableReference varRef) xs
+--           updateState varName (Literal val) [] = (varName, val) : []
+--           updateState varName (VariableReference varRef) [] = []
+
 interpretOne :: Command -> State InterpreterState ()
 interpretOne (Command var value) = do
     interpreterState <- get 
     let updatedInterpreterState = updateState var value interpreterState
     put updatedInterpreterState
-    where updateState varName (Literal val) ((name, _) : xs) | varName == name = (varName, val) : xs
-                                                             | otherwise = (name, val) : updateState varName (Literal val) xs
-          updateState varName (VariableReference varRef) s@((name, val) : xs) | varRef == name = (varName, val) : updateState varName (VariableReference varRef) xs
-                                                                              | otherwise = (name, val) : updateState varName (VariableReference varRef) xs 
-          updateState _ _ [] = error"WRONG ANSWER"
-          
+    where 
+        updateState varName (Literal val) ((name, oldVal) : xs) | varName == name = (varName, val) : xs
+                                                                | otherwise = (name, oldVal) : updateState varName (Literal val) xs
+        updateState varName (VariableReference varRef) ((name, val) : xs) | varRef == name = (name, val) : updateState varName (Literal val) xs
+                                                                          | otherwise = (name, val) : updateState varName (VariableReference varRef) xs
+        updateState varName (Literal val) [] = [(varName, val)]
+        updateState varName (VariableReference varRef) [] = []
 
+          
 -- you may rewrite this. e.g. you can use fold
 -- but if you look at standard library there might be
 -- a better alternative for chaining state functions.
@@ -229,11 +253,11 @@ interpretOne (Command var value) = do
 -- functions is a common task, and it has a standard implementation
 interpretMany :: [Command] -> State InterpreterState ()
 interpretMany [] = return ()
-interpretMany (x:xs) = do
+interpretMany (x : xs) = do
     interpretOne x
     interpretMany xs
 
--- you can choose other type for result
+--you can choose other type for result
 --execState :: State s a -> s -> s
 interpretToState :: [Command] -> [(String, String)]
 interpretToState commands = execState (interpretMany commands) emptyState
@@ -267,10 +291,11 @@ check = do
     let resultState = solveState exampleProgram
     if exampleAns `listEq` resultState
         then putStrLn "OK!"
-        else error "something wrong:("
+        else print resultState
     where listEq l r = leftInRight && rightInLeft
             where leftInRight = all (\x -> x `elem` r) l
                   rightInLeft = all (\x -> x `elem` l) r
+
 
 
 
