@@ -61,8 +61,6 @@ tailMay [] = Nothing
 --                           | fst (greekData !! 2) == name = Just (maximumMay (snd (greekData !! 2)) / headMay (snd (greekData !! 2)))
 --                           | fst (greekData !! 3) == name = Just (maximumMay (snd (greekData !! 3)) / headMay (snd (greekData !! 3)))
 --                           | otherwise = Nothing
-fromJust :: Maybe a -> a
-fromJust (Just x) = x
 
 findSecondElementByFirstElement :: String -> [(String, [Integer])] -> [Integer]
 findSecondElementByFirstElement name = foldl(\acc (x, y) -> if name == x then y else acc) []
@@ -71,22 +69,35 @@ findSecondElementByFirstElement name = foldl(\acc (x, y) -> if name == x then y 
 --Input: lookup 'c' [('a',0),('b',1),('c',2)]
 --Output: Just 2
 
-queryGreek'' :: GreekData -> String -> Maybe Double
-queryGreek'' greekData name | not (null array) = divMay (fromIntegral(fromJust(maximumMay array))) (fromIntegral(fromJust(headMay array)))
-                            | otherwise = Nothing
-                            where array = fromJust (lookup name greekData) 
-                                          
-queryGreek' :: GreekData -> String -> Maybe Double
-queryGreek' greekData name | not (null array) = divMay (fromIntegral(fromJust(maximumMay array))) (fromIntegral(fromJust(headMay array)))
-                           | otherwise = Nothing
-                           where array = findSecondElementByFirstElement name greekData
+queryGreek''' :: GreekData -> String -> Maybe Double
+queryGreek''' greekData name | not (null array) = case 
+                                                    divMay 
+                                                        (fromIntegral (case maximumMay array of Just a -> a)) 
+                                                        (fromIntegral (case headMay array of Just b -> b)) 
+                                                    of
+                                                        Just result -> Just result
+                                                        Nothing -> Nothing
+                             | otherwise = Nothing
+                             where array = case lookup name greekData of
+                                                       Just arr -> arr
+                                                       Nothing -> []
 
-queryGreek :: GreekData -> String -> Maybe Double
-queryGreek greekData name | fst (greekData!!0) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!0))))) (fromIntegral(fromJust(headMay(snd(greekData!!0)))))
-                          | fst (greekData!!1) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!1))))) (fromIntegral(fromJust(headMay(snd(greekData!!1)))))
-                          | fst (greekData!!2) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!2))))) (fromIntegral(fromJust(headMay(snd(greekData!!2)))))
-                          | fst (greekData!!3) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!3))))) (fromIntegral(fromJust(headMay(snd(greekData!!3)))))
-                          | otherwise = Nothing
+-- queryGreek'' :: GreekData -> String -> Maybe Double
+-- queryGreek'' greekData name | not (null array) = divMay (fromIntegral(fromJust(maximumMay array))) (fromIntegral(fromJust(headMay array)))
+--                             | otherwise = Nothing
+--                             where array = fromJust (lookup name greekData) 
+                                          
+-- queryGreek' :: GreekData -> String -> Maybe Double
+-- queryGreek' greekData name | not (null array) = divMay (fromIntegral(fromJust(maximumMay array))) (fromIntegral(fromJust(headMay array)))
+--                            | otherwise = Nothing
+--                            where array = findSecondElementByFirstElement name greekData
+
+-- queryGreek :: GreekData -> String -> Maybe Double
+-- queryGreek greekData name | fst (greekData!!0) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!0))))) (fromIntegral(fromJust(headMay(snd(greekData!!0)))))
+--                           | fst (greekData!!1) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!1))))) (fromIntegral(fromJust(headMay(snd(greekData!!1)))))
+--                           | fst (greekData!!2) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!2))))) (fromIntegral(fromJust(headMay(snd(greekData!!2)))))
+--                           | fst (greekData!!3) == name = divMay (fromIntegral(fromJust(maximumMay(snd(greekData!!3))))) (fromIntegral(fromJust(headMay(snd(greekData!!3)))))
+--                           | otherwise = Nothing
 
 -- queryGreek greekDataA "alpha" == Just 2.0
 
@@ -104,11 +115,11 @@ queryGreek greekData name | fst (greekData!!0) == name = divMay (fromIntegral(fr
 -- Output: [4]
 
 
-queryGreekPro :: GreekData -> String -> Maybe Double
-queryGreekPro greekData name = do
-    let array = findSecondElementByFirstElement name greekData
-    --or
-    let array2 = fromJust (lookup name greekData)
+-- queryGreekPro :: GreekData -> String -> Maybe Double
+-- queryGreekPro greekData name = do
+--     let array = findSecondElementByFirstElement name greekData
+--     --or
+--     let array2 = fromJust (lookup name greekData)
 --1vers
     -- let max = maximumMay array
     -- let head = headMay array
@@ -116,17 +127,31 @@ queryGreekPro greekData name = do
     --     (max, head) -> divMay (fromIntegral max) (fromIntegral head)
 --при array == [] вылетает исключение, надо пофиксить
 
+
+queryGreekPro :: GreekData -> String -> Maybe Double
+queryGreekPro greekData name = do
+    let array = findSecondElementByFirstElement name greekData
+    let max = maximumMay array
+    let head = headMay array
+    case (max, head) of
+        (Just valMax, Just valHead) ->  divMay (fromIntegral valMax) (fromIntegral valHead)  
+        (Nothing, Nothing) -> Nothing
+        (Just valMax, Nothing) -> Nothing
+        (Nothing, Just valHead) -> Nothing
+ 
+
 --2vers без исключения на пустом array
-    case (array) of
-        [] -> Nothing
-        (x : xs) -> divMay (fromIntegral (fromJust (maximumMay array))) (fromIntegral (fromJust (headMay array))) 
+    -- case (array) of
+    --     [] -> Nothing
+    --     (x : xs) -> divMay (fromIntegral (fromJust (maximumMay array))) (fromIntegral (fromJust (headMay array))) 
+-- переписать 
 
 --3vers как сделать case (max, head) с обработкой пустых значений хммммммммммммммммммммммммммммм потом сделаю мб
 
 --a harder task. rewrite queryGreekPro, but without the do-notation, only using the (>>=) operator and its friends
 --in other words, desugarize your notation
 
---(>>=) :: m a -> (a -> m b) -> m b
+--(>>=) :: m a -> (a -> m b) -> m b --переписать
 
 -- queryGreekProPlus :: GreekData -> String -> Maybe Double
 -- queryGreekProPlus greekData name = 
@@ -137,7 +162,28 @@ queryGreekPro greekData name = do
 --                                                         (Just maxVal, Just firstVal) -> 
 --                                                             divMay (fromIntegral maxVal) (fromIntegral firstVal)
 
+    -- queryGreekProPlus :: GreekData -> String -> Maybe Double
+    -- queryGreekProPlus greekData name =
+    --     findSecondElementByFirstElement name greekData >>= \array ->
+    --         maximumMay array >>= \max ->
+    --         headMay array >>= \head ->
+    --         case (max, head) of
+    --             (Just valMax, Just valHead) -> divMay (fromIntegral valMax) (fromIntegral valHead)
+    --             _ -> Nothing
 
+-- 
+
+queryGreekProPlus :: GreekData -> String -> Maybe Double
+queryGreekProPlus greekData name =
+    case findSecondElementByFirstElement name greekData of
+        [] -> Nothing
+        array ->
+            let max = maximumMay array
+                head = headMay array
+            in
+                max >>= \maxVal ->
+                head >>= \headVal ->
+                    divMay (fromIntegral maxVal) (fromIntegral headVal)
 -- Определите тип `RandState` (напр с помощью  `type RandState = ...`  ).  
 -- Замените `_something2` на подходящее выражение (это должен быть seed, т.е. начальное значение генератора псевдо-случайных чисел). 
 -- Определите тип `rollDice` так, чтобы `firstPlayerRes` имел тип `Int`. 
