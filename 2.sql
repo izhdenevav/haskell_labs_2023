@@ -65,23 +65,23 @@
 --8 Get all the unique companies in alphabetical order implementing production chains. The production chain is at least two subsequent bills of materials when the first bill producing ware 
 --that is in use as material in the second bill. Example of such chain in terms of wares is Grain->Meat cow->Meat.
 
-	SELECT DISTINCT m1.COMPANY, p1.WARE, p2.WARE, p3.WARE 
-	FROM MANUFACTURER m1
-	JOIN PRODUCT p1 ON p1.BILL_ID = m1.BILL_ID
-	JOIN PRODUCT p2 ON p1.WARE = p2.WARE
-	JOIN MANUFACTURER m2 ON p2.BILL_ID = m2.BILL_ID
-	JOIN PRODUCT p3 ON p2.BILL_ID = p3.BILL_ID
-	WHERE p1.WARE <> p3.WARE
-	ORDER BY m1.COMPANY
+		SELECT DISTINCT m1.COMPANY, p1.WARE, p2.WARE, p3.WARE 
+		FROM MANUFACTURER m1
+		JOIN PRODUCT p1 ON p1.BILL_ID = m1.BILL_ID
+		JOIN PRODUCT p2 ON p1.WARE = p2.WARE
+		JOIN MANUFACTURER m2 ON p2.BILL_ID = m2.BILL_ID
+		JOIN PRODUCT p3 ON p2.BILL_ID = p3.BILL_ID
+		WHERE p1.WARE <> p3.WARE
+		ORDER BY m1.COMPANY
 
 --9 Modify the query from the previous task to show also the production chain in terms of wares (3 of 
 --them) with additional sorting by middle one (that both a material and a product for the given company).
 
-	SELECT DISTINCT m1.COMPANY, p1.WARE AS Material1, p2.WARE AS Material2, p3.WARE AS Product
-	FROM MANUFACTURER m1
-	JOIN PRODUCT p1 ON p1.BILL_ID = m1.BILL_ID
-	JOIN PRODUCT p2 ON p1.WARE = p2.WARE
-	JOIN MANUFACTURER m2 ON p2.BILL_ID = m2.BILL_ID
-	JOIN PRODUCT p3 ON p2.BILL_ID = p3.BILL_ID
-	WHERE p1.WARE <> p3.WARE
-	ORDER BY m1.COMPANY, p2.WARE
+		SELECT DISTINCT m1.COMPANY, p1.WARE AS Material1, p2.WARE AS Material2, p3.WARE AS Product
+		FROM MANUFACTURER m1
+		JOIN PRODUCT p1 ON p1.BILL_ID = m1.BILL_ID
+		JOIN PRODUCT p2 ON p1.WARE = p2.WARE
+		JOIN MANUFACTURER m2 ON p2.BILL_ID = m2.BILL_ID
+		JOIN PRODUCT p3 ON p2.BILL_ID = p3.BILL_ID
+		WHERE p1.WARE <> p3.WARE
+		ORDER BY m1.COMPANY, p2.WARE
