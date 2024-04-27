@@ -14,17 +14,44 @@
 		LIMIT 3
 
 --4 Show the price of the most expensive ware for each category. The result should be ordered by the category
+		SELECT DISTINCT CATEGORY.CLASS, CATEGORY.WARE, MAX(PRODUCT.PRICE)
+		FROM CATEGORY, PRODUCT
+		WHERE CATEGORY.WARE = PRODUCT.WARE
+		GROUP BY CATEGORY.CLASS
+		ORDER BY CATEGORY.CLASS, CATEGORY.WARE, PRODUCT.PRICE 
 
 --5. For each bill of materials show the company and lists of all the products and materials. The result must contain exactly one row per bill and sorted by company. Lists in the result 
 --must be represented as strings with values separated with comma
 
+--че?
+--КАК СТРОКУ ДЕЛАТЬ???????????? ...
+--функции в лекции 3 
+
 --6. Show the companies in the alphabetical order that producing larger number of different wares than consuming.
 
+--че??
 
 --7. Show all the companies that produce the same ware by more than 2 different ways (bills of materials).
+
+--че?
+
 --8. Get all the unique companies producing at least one ware from each category in the set: Fuel, Food and Mineral. The query should be easily modifiable to use any set of categories.
+
+--УТОЧНИТЬ 
+
+-- SELECT DISTINCT MANUFACTURER.COMPANY, CATEGORY.CLASS, PRODUCT.WARE
+-- FROM MANUFACTURER, CATEGORY, PRODUCT
+-- WHERE MANUFACTURER.BILL_ID = PRODUCT.BILL_ID AND PRODUCT.WARE = CATEGORY.WARE AND (CATEGORY.CLASS = "Fuel" OR CATEGORY.CLASS = "Food" OR CATEGORY.CLASS = "Mineral")
+-- GROUP BY MANUFACTURER.COMPANY
+-- ORDER BY MANUFACTURER.COMPANY
+
 --9. For each company get the list of all the categories of materials used and the list of categories of products. The result must contain exactly one row per company and each list 
 --must contain only the unique entries.
+
+--опять про строчку
+
 --10. For each company show all the production chains (separate row per company/chain). Here the production chain is defined as the intermediate product (ware) that both product for the one bill 
 --and material for other where both bills are owned by the same company. Each chain must be presented in the following
 --form (MATERIAL1,MATERIAL2,...)-[BILL_ID1]->(INTERMEDIATE_PRODUCT)-[BILL_ID2]-(PRODUCT1, PRODUCT2,...). The result must be sorted by the company.
+
+--да что такое это ваша строчка
