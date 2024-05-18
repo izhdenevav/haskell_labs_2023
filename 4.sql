@@ -1,21 +1,21 @@
 -- 4.1 Show the product with the largest average price over the market.
---ДОДЕЛАТЬ
--- SELECT PRODUCT.WARE, COUNT(PRODUCT.WARE), SUM(PRODUCT.PRICE)
--- FROM PRODUCT
--- GROUP BY PRODUCT.WARE
--- ORDER BY PRODUCT.WARE
+    SELECT PRODUCT.WARE 
+    FROM PRODUCT
+    WHERE PRODUCT.PRICE = (SELECT MAX(PRODUCT.PRICE) from PRODUCT)
+    GROUP BY PRODUCT.WARE
+    ORDER BY PRODUCT.WARE
 
 -- 4.2. Show one sample ware from each category.
 
--- SELECT DISTINCT c.CLASS, (SELECT PRODUCT.WARE FROM PRODUCT, CATEGORY WHERE PRODUCT.WARE = CATEGORY.WARE AND CATEGORY.CLASS = c.CLASS LIMIT 1) 
--- FROM CATEGORY c
+    SELECT DISTINCT c.CLASS, (SELECT PRODUCT.WARE FROM PRODUCT, CATEGORY WHERE PRODUCT.WARE = CATEGORY.WARE AND CATEGORY.CLASS = c.CLASS LIMIT 1) 
+    FROM CATEGORY c
 
 -- 4.3. Show the most expensive ware in each category and its price
 
--- SELECT DISTINCT c.CLASS, c.WARE, (SELECT MAX(PRODUCT.PRICE) FROM PRODUCT, CATEGORY WHERE PRODUCT.WARE = CATEGORY.WARE AND CATEGORY.CLASS = c.CLASS LIMIT 1) AS MAX
--- FROM CATEGORY c, PRODUCT p
--- GROUP BY c.CLASS
--- ORDER BY c.CLASS
+    SELECT DISTINCT c.CLASS, c.WARE, (SELECT MAX(PRODUCT.PRICE) FROM PRODUCT, CATEGORY WHERE PRODUCT.WARE = CATEGORY.WARE AND CATEGORY.CLASS = c.CLASS LIMIT 1) AS MAX
+    FROM CATEGORY c, PRODUCT p
+    GROUP BY c.CLASS
+    ORDER BY c.CLASS
 
 -- 4.4. Show the list of all the “greedy” companies, i.e. companies selling all the wares they are producing with prices at least 20% higher than average price for this product on the market.
 
@@ -32,5 +32,11 @@
 -- - all the unique sets of materials used in different variants of bills of materials
 -- - all the possible byproducts (i.e. additional products in the same bill of materials)
 -- There must be exactly one row per ware.
+  		SELECT DISTINCT p.WARE, P.BILL_ID, GROUP_CONCAT(DISTINCT mt.WARE), GROUP_CONCAT(DISTINCT p2.WARE)
+  		FROM PRODUCT p
+  		LEFT JOIN MATERIAL mt ON mt.BILL_ID = p.BILL_ID
+  		LEFT JOIN PRODUCT p2 ON p2.BILL_ID = p.BILL_ID AND p2.WARE != p.WARE
+  		GROUP BY p.WARE
+  		ORDER BY p.WARE
 -- 4.8. Show all the companies with the largest number of different wares they producing and their lists of
 -- wares in alphabetical order.
