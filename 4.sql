@@ -32,11 +32,10 @@
 -- - all the unique sets of materials used in different variants of bills of materials
 -- - all the possible byproducts (i.e. additional products in the same bill of materials)
 -- There must be exactly one row per ware.
-  		SELECT DISTINCT p.WARE, P.BILL_ID, GROUP_CONCAT(DISTINCT mt.WARE), GROUP_CONCAT(DISTINCT p2.WARE)
-  		FROM PRODUCT p
-  		LEFT JOIN MATERIAL mt ON mt.BILL_ID = p.BILL_ID
-  		LEFT JOIN PRODUCT p2 ON p2.BILL_ID = p.BILL_ID AND p2.WARE != p.WARE
-  		GROUP BY p.WARE
-  		ORDER BY p.WARE
+		SELECT p.WARE, (SELECT GROUP_CONCAT(DISTINCT m.WARE) FROM MATERIAL m WHERE m.BILL_ID IN (SELECT BILL_ID FROM PRODUCT p2 WHERE p2.WARE = p.WARE)), 
+		(SELECT GROUP_CONCAT(DISTINCT p2.WARE) FROM PRODUCT p2 WHERE p2.BILL_ID IN (SELECT BILL_ID FROM PRODUCT p3 WHERE p3.WARE = p.WARE) AND p2.WARE != p.WARE)
+		FROM PRODUCT p
+		GROUP BY p.WARE
+		ORDER BY p.WARE
 -- 4.8. Show all the companies with the largest number of different wares they producing and their lists of
 -- wares in alphabetical order.
