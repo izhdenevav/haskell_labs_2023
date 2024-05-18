@@ -23,32 +23,53 @@
 --5. For each bill of materials show the company and lists of all the products and materials. The result must contain exactly one row per bill and sorted by company. Lists in the result 
 --must be represented as strings with values separated with comma
 
---че?
---КАК СТРОКУ ДЕЛАТЬ???????????? ...
---функции в лекции 3 
-
+		SELECT DISTINCT m.COMPANY, group_concat(DISTINCT p.WARE) AS PRODUCTS, group_concat(DISTINCT mt.WARE) AS MATERIALS
+		FROM MANUFACTURER m
+		JOIN PRODUCT p ON p.BILL_ID = m.BILL_ID
+		JOIN MATERIAL mt ON mt.BILL_ID = m.BILL_ID
+		GROUP BY m.COMPANY
+		ORDER BY m.COMPANY
+		
 --6. Show the companies in the alphabetical order that producing larger number of different wares than consuming.
 
---че??
+		SELECT DISTINCT m.COMPANY
+		FROM MANUFACTURER m 
+		LEFT JOIN PRODUCT p ON m.BILL_ID = p.BILL_ID
+		LEFT JOIN MATERIAL ON mt.BILL_ID = m.BILL_ID
+		GROUP BY m.COMPANY
+		HAVING COUNT(DISTINCT PRODUCT.WARE) > COUNT(DISTINCT MATERIAL.WARE)
+		ORDER BY m.COMPANY
 
 --7. Show all the companies that produce the same ware by more than 2 different ways (bills of materials).
 
---че?
+		SELECT DISTINCT m.COMPANY
+		FROM MANUFACTURER m
+		LEFT JOIN MATERIAL mt ON m.BILL_ID = mt.BILL_ID
+		GROUP BY m.COMPANY
+		HAVING COUNT(DISTINCT mt.WARE) > 2
+		ORDER BY m.COMPANY
 
 --8. Get all the unique companies producing at least one ware from each category in the set: Fuel, Food and Mineral. The query should be easily modifiable to use any set of categories.
 
---УТОЧНИТЬ 
-
--- SELECT DISTINCT MANUFACTURER.COMPANY, CATEGORY.CLASS, PRODUCT.WARE
--- FROM MANUFACTURER, CATEGORY, PRODUCT
--- WHERE MANUFACTURER.BILL_ID = PRODUCT.BILL_ID AND PRODUCT.WARE = CATEGORY.WARE AND (CATEGORY.CLASS = "Fuel" OR CATEGORY.CLASS = "Food" OR CATEGORY.CLASS = "Mineral")
--- GROUP BY MANUFACTURER.COMPANY
--- ORDER BY MANUFACTURER.COMPANY
+		SELECT DISTINCT m.COMPANY
+		FROM MANUFACTURER m
+		JOIN PRODUCT p ON m.BILL_ID = p.BILL_ID
+		JOIN CATEGORY c ON p.WARE = c.WARE
+		GROUP BY m.COMPANY
+		HAVING ((COUNT(c.CLASS = 'Fuel') > 0) and (COUNT(c.CLASS = 'Food') > 0) and (COUNT(c.CLASS = 'Mineral') > 0))
+		ORDER BY m.COMPANY
 
 --9. For each company get the list of all the categories of materials used and the list of categories of products. The result must contain exactly one row per company and each list 
 --must contain only the unique entries.
 
---опять про строчку
+		SELECT DISTINCT m.COMPANY, GROUP_CONCAT(DISTINCT c.CLASS), GROUP_CONCAT(DISTINCT c2.CLASS)
+		FROM MANUFACTURER m
+		JOIN PRODUCT p ON p.BILL_ID = m.BILL_ID
+		LEFT JOIN MATERIAL mt ON mt.BILL_ID = m.BILL_ID
+		LEFT JOIN CATEGORY c ON c.WARE = p.WARE
+		LEFT JOIN CATEGORY c2 ON c2.WARE = mt.WARE
+		GROUP BY m.COMPANY
+		ORDER BY m.COMPANY
 
 --10. For each company show all the production chains (separate row per company/chain). Here the production chain is defined as the intermediate product (ware) that both product for the one bill 
 --and material for other where both bills are owned by the same company. Each chain must be presented in the following
