@@ -34,20 +34,15 @@
 
 		SELECT DISTINCT m.COMPANY
 		FROM MANUFACTURER m 
-		LEFT JOIN PRODUCT p ON m.BILL_ID = p.BILL_ID
-		LEFT JOIN MATERIAL ON mt.BILL_ID = m.BILL_ID
+		JOIN PRODUCT p ON m.BILL_ID = p.BILL_ID
+		JOIN MATERIAL mt ON mt.BILL_ID = m.BILL_ID
 		GROUP BY m.COMPANY
-		HAVING COUNT(DISTINCT PRODUCT.WARE) > COUNT(DISTINCT MATERIAL.WARE)
+		HAVING COUNT(DISTINCT p.WARE) > COUNT(DISTINCT mt.WARE)
 		ORDER BY m.COMPANY
 
 --7. Show all the companies that produce the same ware by more than 2 different ways (bills of materials).
+		
 
-		SELECT DISTINCT m.COMPANY
-		FROM MANUFACTURER m
-		LEFT JOIN MATERIAL mt ON m.BILL_ID = mt.BILL_ID
-		GROUP BY m.COMPANY
-		HAVING COUNT(DISTINCT mt.WARE) > 2
-		ORDER BY m.COMPANY
 
 --8. Get all the unique companies producing at least one ware from each category in the set: Fuel, Food and Mineral. The query should be easily modifiable to use any set of categories.
 
@@ -65,14 +60,12 @@
 		SELECT DISTINCT m.COMPANY, GROUP_CONCAT(DISTINCT c.CLASS), GROUP_CONCAT(DISTINCT c2.CLASS)
 		FROM MANUFACTURER m
 		JOIN PRODUCT p ON p.BILL_ID = m.BILL_ID
-		LEFT JOIN MATERIAL mt ON mt.BILL_ID = m.BILL_ID
-		LEFT JOIN CATEGORY c ON c.WARE = p.WARE
-		LEFT JOIN CATEGORY c2 ON c2.WARE = mt.WARE
+		JOIN MATERIAL mt ON mt.BILL_ID = m.BILL_ID
+		JOIN CATEGORY c ON c.WARE = p.WARE
+		JOIN CATEGORY c2 ON c2.WARE = mt.WARE
 		GROUP BY m.COMPANY
 		ORDER BY m.COMPANY
 
 --10. For each company show all the production chains (separate row per company/chain). Here the production chain is defined as the intermediate product (ware) that both product for the one bill 
 --and material for other where both bills are owned by the same company. Each chain must be presented in the following
 --form (MATERIAL1,MATERIAL2,...)-[BILL_ID1]->(INTERMEDIATE_PRODUCT)-[BILL_ID2]-(PRODUCT1, PRODUCT2,...). The result must be sorted by the company.
-
---да что такое это ваша строчка
