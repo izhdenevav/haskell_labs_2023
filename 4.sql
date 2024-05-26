@@ -10,8 +10,12 @@
 	    FROM CATEGORY c
 
 -- 4.3. Show the most expensive ware in each category and its price
-
-
+		SELECT c.CLASS, p.WARE, p.PRICE
+		FROM CATEGORY c
+		JOIN PRODUCT p ON p.WARE = c.WARE
+		WHERE p.PRICE = (SELECT MAX(PRICE) FROM PRODUCT WHERE PRODUCT.WARE = p.WARE)
+		GROUP BY c.CLASS
+		ORDER BY c.CLASS, p.WARE, p.PRICE DESC	
 -- 4.4. Show the list of all the “greedy” companies, i.e. companies selling all the wares they are producing with prices at least 20% higher than average price for this product on the market.
 
 
@@ -20,7 +24,12 @@
 -- and the category and be sorted by the category. If the company covers multiple categories in such way,
 -- there should be multiple rows for this company. To prove that the result is correct enrich it with the
 -- additional column showing all the wares in the given category that the given company is actually producing.
-	    
+	    	SELECT m.COMPANY, c.CLASS, (SELECT COUNT(DISTINCT CATEGORY.WARE) FROM CATEGORY WHERE CATEGORY.CLASS = c.CLASS GROUP BY CATEGORY.CLASS) AS NUM_c_WARES, COUNT(DISTINCT p.WARE) AS NUM_WARES, group_concat(DISTINCT p.WARE) AS PRODUCED_WARES
+		FROM MANUFACTURER m, PRODUCT p, CATEGORY c
+		WHERE p.BILL_ID = m.BILL_ID and c.WARE = p.WARE
+		GROUP BY c.CLASS, m.COMPANY 
+		HAVING NUM_c_WARES = NUM_WARES
+		ORDER BY m.COMPANY
 -- 4.6. For each bill of material show the company, all the materials, products, total price of all the products
 -- considering their amounts. There must be exactly one row per bill and the result must be ordered by company.
 		  SELECT m.COMPANY,
