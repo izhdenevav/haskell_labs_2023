@@ -49,8 +49,14 @@
 		ORDER BY p.WARE
 -- 4.8. Show all the companies with the largest number of different wares they producing and their lists of
 -- wares in alphabetical order.
-		  SELECT m.COMPANY,
-		      (SELECT COUNT(DISTINCT p.WARE) FROM PRODUCT p WHERE p.BILL_ID = m.BILL_ID) AS NUM,
-		      (SELECT group_concat(DISTINCT p.WARE) FROM PRODUCT p WHERE p.BILL_ID = m.BILL_ID ORDER BY p.WARE) AS WARES
-		  FROM MANUFACTURER m
-		  ORDER BY NUM DESC
+			SELECT m.COMPANY, COUNT(DISTINCT p.WARE) AS NUM_WARES, group_concat(DISTINCT p.WARE) AS WARES
+			FROM MANUFACTURER m
+			JOIN PRODUCT p ON m.BILL_ID = p.BILL_ID
+			GROUP BY m.COMPANY
+			HAVING COUNT(DISTINCT p.WARE) = (SELECT COUNT(DISTINCT p2.WARE) 
+											 FROM MANUFACTURER m2
+										     JOIN PRODUCT p2 ON m2.BILL_ID = p2.BILL_ID
+									         GROUP BY m2.COMPANY
+											 ORDER BY COUNT(DISTINCT p2.WARE) DESC
+											 LIMIT 1)
+			ORDER BY NUM_WARES DESC
